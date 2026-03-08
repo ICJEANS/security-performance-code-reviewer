@@ -56,3 +56,10 @@
 - Local test evidence:
   - Command: `python3 -m unittest discover -s tests -v`
   - Result: `Ran 9 tests` / `OK`
+
+## 2026-03-08 Round 8
+- Added markdown escaping for pipe characters in report table fields.
+- Added test `test_markdown_escapes_pipes`.
+- Local test evidence:
+  - Command: `python3 -m unittest discover -s tests -v`
+  - Result: `Ran 10 tests` / `OK`

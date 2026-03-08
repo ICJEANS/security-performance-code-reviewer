@@ -86,11 +86,15 @@ def scan_path(target: str):
     return sorted(out, key=lambda x: (severity_rank.get(x.severity, 99), x.file, x.line, x.category))
 
 
+def _md_escape(value: str) -> str:
+    return value.replace("|", "\\|")
+
+
 def to_markdown(findings):
     if not findings:
         return "## Review Report\n\n- No obvious issues found."
     rows = ["## Review Report", "", "|Severity|Category|File|Line|Message|", "|---|---|---|---:|---|"]
     for f in findings:
-        rows.append(f"|{f.severity}|{f.category}|{f.file}|{f.line}|{f.message}|")
+        rows.append(f"|{_md_escape(f.severity)}|{_md_escape(f.category)}|{_md_escape(f.file)}|{f.line}|{_md_escape(f.message)}|")
     rows.append("\n## Suggested Diff\n\n```diff\n- execute(\"SELECT * FROM users WHERE id=\" + user_id)\n+ execute(\"SELECT * FROM users WHERE id=%s\", (user_id,))\n```")
     return "\n".join(rows)

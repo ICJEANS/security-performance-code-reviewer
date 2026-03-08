@@ -2,7 +2,7 @@ import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parents[1] / 'src'))
 import unittest
-from reviewer import scan_file, scan_path
+from reviewer import scan_file, scan_path, to_markdown, Finding
 
 
 class TestReviewer(unittest.TestCase):
@@ -72,6 +72,11 @@ class TestReviewer(unittest.TestCase):
             (p / "b.py").write_text("while True:\n    break\nwhile True:\n    break\nwhile True:\n    break\n")
             findings = scan_path(str(p))
             self.assertEqual(findings[0].severity, "high")
+
+    def test_markdown_escapes_pipes(self):
+        md = to_markdown([Finding("high", "Cat|egory", "msg|text", "a|b.py", 3)])
+        self.assertIn("Cat\\|egory", md)
+        self.assertIn("a\\|b.py", md)
 
     def test_no_perf_finding_for_sequential_loops(self):
         from tempfile import TemporaryDirectory
