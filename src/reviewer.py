@@ -61,8 +61,9 @@ def scan_file(path: Path):
     lines = text.splitlines()
     patterns = WEB_PATTERNS + C_PATTERNS + SECRET_PATTERNS + CODE_PATTERNS
     for idx, line in enumerate(lines, start=1):
+        check_line = line.split("#", 1)[0]
         for sev, cat, pat in patterns:
-            if pat.search(line):
+            if pat.search(check_line):
                 findings.append(Finding(sev, cat, f"Potential {cat} pattern", str(path), idx))
 
     if _max_loop_nesting(lines) >= 3:

@@ -30,6 +30,14 @@ class TestReviewer(unittest.TestCase):
             findings = scan_file(f)
             self.assertTrue(any(x.category == "CodeInjection" for x in findings))
 
+    def test_ignore_commented_patterns(self):
+        from tempfile import TemporaryDirectory
+        with TemporaryDirectory() as td:
+            f = Path(td) / "comments.py"
+            f.write_text("# API_KEY = '1234567890abcd'\n")
+            findings = scan_file(f)
+            self.assertFalse(any(x.category == "HardcodedSecret" for x in findings))
+
     def test_no_perf_finding_for_sequential_loops(self):
         from tempfile import TemporaryDirectory
         with TemporaryDirectory() as td:
