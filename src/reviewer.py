@@ -36,7 +36,10 @@ LOOP_RE = re.compile(r"\b(for|while)\b")
 def _collect_files(target: Path) -> list[Path]:
     if target.is_file():
         return [target]
-    return [f for f in target.rglob("*") if f.suffix in {".py", ".c", ".js", ".ts"} and f.is_file()]
+    return sorted(
+        [f for f in target.rglob("*") if f.suffix in {".py", ".c", ".js", ".ts"} and f.is_file()],
+        key=lambda p: str(p),
+    )
 
 
 def _max_loop_nesting(lines: Iterable[str]) -> int:

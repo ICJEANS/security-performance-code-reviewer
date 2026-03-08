@@ -2,7 +2,7 @@ import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parents[1] / 'src'))
 import unittest
-from reviewer import scan_file
+from reviewer import scan_file, scan_path
 
 
 class TestReviewer(unittest.TestCase):
@@ -37,6 +37,16 @@ class TestReviewer(unittest.TestCase):
             f.write_text("# API_KEY = '1234567890abcd'\n")
             findings = scan_file(f)
             self.assertFalse(any(x.category == "HardcodedSecret" for x in findings))
+
+    def test_scan_path_is_deterministic(self):
+        from tempfile import TemporaryDirectory
+        with TemporaryDirectory() as td:
+            p = Path(td)
+            (p / "b.py").write_text("API_KEY = '1234567890abcd'\n")
+            (p / "a.py").write_text("result = eval(user_input)\n")
+            one = [f.file for f in scan_path(str(p))]
+            two = [f.file for f in scan_path(str(p))]
+            self.assertEqual(one, two)
 
     def test_no_perf_finding_for_sequential_loops(self):
         from tempfile import TemporaryDirectory

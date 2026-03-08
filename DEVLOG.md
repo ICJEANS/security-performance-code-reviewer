@@ -28,3 +28,10 @@
 - Local test evidence:
   - Command: `python3 -m unittest discover -s tests -v`
   - Result: `Ran 5 tests` / `OK`
+
+## 2026-03-08 Round 4
+- Made recursive file collection deterministic via path-sorted ordering.
+- Added test `test_scan_path_is_deterministic`.
+- Local test evidence:
+  - Command: `python3 -m unittest discover -s tests -v`
+  - Result: `Ran 6 tests` / `OK`
