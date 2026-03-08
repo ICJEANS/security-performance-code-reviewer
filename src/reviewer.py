@@ -1,6 +1,8 @@
 import re
 from pathlib import Path
 from dataclasses import dataclass
+from typing import Iterable
+
 
 @dataclass
 class Finding:
@@ -9,6 +11,7 @@ class Finding:
     message: str
     file: str
     line: int
+
 
 WEB_PATTERNS = [
     ("high", "SQLi", re.compile(r"select.+\+|select.+%s|f\"select|execute\(.+\+", re.IGNORECASE)),
@@ -19,30 +22,55 @@ WEB_PATTERNS = [
 C_PATTERNS = [
     ("high", "BufferOverflow", re.compile(r"\b(gets|strcpy|sprintf)\s*\(")),
 ]
+SECRET_PATTERNS = [
+    ("high", "HardcodedSecret", re.compile(r"(?i)(api[_-]?key|secret|token|password)\s*=\s*['\"][^'\"]{8,}['\"]")),
+]
+
+
+LOOP_RE = re.compile(r"\b(for|while)\b")
+
+
+def _collect_files(target: Path) -> list[Path]:
+    if target.is_file():
+        return [target]
+    return [f for f in target.rglob("*") if f.suffix in {".py", ".c", ".js", ".ts"} and f.is_file()]
+
+
+def _max_loop_nesting(lines: Iterable[str]) -> int:
+    max_depth = 0
+    stack: list[int] = []
+    for line in lines:
+        stripped = line.rstrip("\n")
+        if not stripped.strip() or stripped.lstrip().startswith("#"):
+            continue
+        indent = len(stripped) - len(stripped.lstrip(" "))
+        while stack and indent <= stack[-1]:
+            stack.pop()
+        if LOOP_RE.search(stripped):
+            stack.append(indent)
+            max_depth = max(max_depth, len(stack))
+    return max_depth
 
 
 def scan_file(path: Path):
     text = path.read_text(encoding="utf-8", errors="ignore")
     findings = []
     lines = text.splitlines()
-    patterns = WEB_PATTERNS + C_PATTERNS
+    patterns = WEB_PATTERNS + C_PATTERNS + SECRET_PATTERNS
     for idx, line in enumerate(lines, start=1):
         for sev, cat, pat in patterns:
             if pat.search(line):
                 findings.append(Finding(sev, cat, f"Potential {cat} pattern", str(path), idx))
 
-    # naive perf check: nested loops
-    nested = sum(1 for l in lines if re.search(r"\bfor\b|\bwhile\b", l))
-    if nested >= 3:
-        findings.append(Finding("low", "Performance", "Multiple loops detected, review complexity", str(path), 1))
+    if _max_loop_nesting(lines) >= 3:
+        findings.append(Finding("low", "Performance", "Deeply nested loops detected, review complexity", str(path), 1))
     return findings
 
 
 def scan_path(target: str):
     p = Path(target)
-    files = [p] if p.is_file() else [f for f in p.rglob("*") if f.suffix in {".py", ".c", ".js", ".ts"}]
     out = []
-    for f in files:
+    for f in _collect_files(p):
         out.extend(scan_file(f))
     return out
 
