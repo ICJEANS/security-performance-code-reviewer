@@ -60,6 +60,8 @@ def _max_loop_nesting(lines: Iterable[str]) -> int:
 
 
 def scan_file(path: Path):
+    if path.stat().st_size > 1_000_000:
+        return [Finding("low", "Performance", "Skipped very large file (>1MB)", str(path), 1)]
     text = path.read_text(encoding="utf-8", errors="ignore")
     findings = []
     lines = text.splitlines()

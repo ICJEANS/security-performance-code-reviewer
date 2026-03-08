@@ -42,3 +42,10 @@
 - Local test evidence:
   - Command: `python3 -m unittest discover -s tests -v`
   - Result: `Ran 7 tests` / `OK`
+
+## 2026-03-08 Round 6
+- Added >1MB file guard in `scan_file` to prevent pathological scan cost and memory spikes.
+- Added test `test_large_file_is_skipped_with_notice`.
+- Local test evidence:
+  - Command: `python3 -m unittest discover -s tests -v`
+  - Result: `Ran 8 tests` / `OK`

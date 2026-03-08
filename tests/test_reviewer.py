@@ -56,6 +56,14 @@ class TestReviewer(unittest.TestCase):
             findings = scan_file(f)
             self.assertTrue(any(x.category == "PathTraversal" for x in findings))
 
+    def test_large_file_is_skipped_with_notice(self):
+        from tempfile import TemporaryDirectory
+        with TemporaryDirectory() as td:
+            f = Path(td) / "big.py"
+            f.write_text("x='a'\n" * 300000)
+            findings = scan_file(f)
+            self.assertTrue(any("Skipped very large file" in x.message for x in findings))
+
     def test_no_perf_finding_for_sequential_loops(self):
         from tempfile import TemporaryDirectory
         with TemporaryDirectory() as td:
