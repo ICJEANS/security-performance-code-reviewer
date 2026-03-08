@@ -30,6 +30,14 @@ class TestReviewer(unittest.TestCase):
             findings = scan_file(f)
             self.assertTrue(any(x.category == "CodeInjection" for x in findings))
 
+    def test_detect_colon_style_secret_assignment(self):
+        from tempfile import TemporaryDirectory
+        with TemporaryDirectory() as td:
+            f = Path(td) / "secret_json.py"
+            f.write_text('"api_key": "1234567890abcd"\n')
+            findings = scan_file(f)
+            self.assertTrue(any(x.category == "HardcodedSecret" for x in findings))
+
     def test_ignore_commented_patterns(self):
         from tempfile import TemporaryDirectory
         with TemporaryDirectory() as td:

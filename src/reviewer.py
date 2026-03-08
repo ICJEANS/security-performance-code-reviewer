@@ -24,7 +24,7 @@ C_PATTERNS = [
     ("high", "BufferOverflow", re.compile(r"\b(gets|strcpy|sprintf)\s*\(")),
 ]
 SECRET_PATTERNS = [
-    ("high", "HardcodedSecret", re.compile(r"(?i)(api[_-]?key|secret|token|password)\s*=\s*['\"][^'\"]{8,}['\"]")),
+    ("high", "HardcodedSecret", re.compile(r"(?i)['\"]?(api[_-]?key|secret|token|password)['\"]?\s*[:=]\s*['\"][^'\"]{8,}['\"]")),
 ]
 CODE_PATTERNS = [
     ("high", "CodeInjection", re.compile(r"\beval\s*\(|\bexec\s*\(")),

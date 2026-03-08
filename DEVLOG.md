@@ -63,3 +63,10 @@
 - Local test evidence:
   - Command: `python3 -m unittest discover -s tests -v`
   - Result: `Ran 10 tests` / `OK`
+
+## 2026-03-08 Round 9
+- Expanded secret detector to support colon-style key/value forms (JSON-like snippets).
+- Added test `test_detect_colon_style_secret_assignment`.
+- Local test evidence:
+  - Command: `python3 -m unittest discover -s tests -v`
+  - Result: `Ran 11 tests` / `OK`
