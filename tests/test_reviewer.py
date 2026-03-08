@@ -86,6 +86,9 @@ class TestReviewer(unittest.TestCase):
         self.assertIn("Cat\\|egory", md)
         self.assertIn("a\\|b.py", md)
 
+    def test_scan_path_missing_target(self):
+        self.assertEqual(scan_path('/tmp/no-such-scan-target-12345'), [])
+
     def test_no_perf_finding_for_sequential_loops(self):
         from tempfile import TemporaryDirectory
         with TemporaryDirectory() as td:

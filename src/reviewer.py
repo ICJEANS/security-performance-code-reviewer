@@ -79,6 +79,8 @@ def scan_file(path: Path):
 
 def scan_path(target: str):
     p = Path(target)
+    if not p.exists():
+        return []
     out = []
     for f in _collect_files(p):
         out.extend(scan_file(f))

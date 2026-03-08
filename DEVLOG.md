@@ -70,3 +70,11 @@
 - Local test evidence:
   - Command: `python3 -m unittest discover -s tests -v`
   - Result: `Ran 11 tests` / `OK`
+
+## 2026-03-08 Round 10
+- Added safe missing-target handling in `scan_path` (returns empty findings rather than raising).
+- CI command now explicitly uses `python3 -m unittest discover -s tests -v` to match local validation.
+- Added test `test_scan_path_missing_target`.
+- Local test evidence:
+  - Command: `python3 -m unittest discover -s tests -v`
+  - Result: `Ran 12 tests` / `OK`
