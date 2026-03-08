@@ -82,7 +82,8 @@ def scan_path(target: str):
     out = []
     for f in _collect_files(p):
         out.extend(scan_file(f))
-    return out
+    severity_rank = {"high": 0, "medium": 1, "low": 2}
+    return sorted(out, key=lambda x: (severity_rank.get(x.severity, 99), x.file, x.line, x.category))
 
 
 def to_markdown(findings):

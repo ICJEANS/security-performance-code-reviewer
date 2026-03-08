@@ -64,6 +64,15 @@ class TestReviewer(unittest.TestCase):
             findings = scan_file(f)
             self.assertTrue(any("Skipped very large file" in x.message for x in findings))
 
+    def test_scan_path_orders_by_severity(self):
+        from tempfile import TemporaryDirectory
+        with TemporaryDirectory() as td:
+            p = Path(td)
+            (p / "a.py").write_text("result = eval(user_input)\n")
+            (p / "b.py").write_text("while True:\n    break\nwhile True:\n    break\nwhile True:\n    break\n")
+            findings = scan_path(str(p))
+            self.assertEqual(findings[0].severity, "high")
+
     def test_no_perf_finding_for_sequential_loops(self):
         from tempfile import TemporaryDirectory
         with TemporaryDirectory() as td:

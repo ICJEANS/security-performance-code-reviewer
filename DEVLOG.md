@@ -49,3 +49,10 @@
 - Local test evidence:
   - Command: `python3 -m unittest discover -s tests -v`
   - Result: `Ran 8 tests` / `OK`
+
+## 2026-03-08 Round 7
+- Sorted `scan_path` findings by severity/file/line for stable prioritization.
+- Added test `test_scan_path_orders_by_severity`.
+- Local test evidence:
+  - Command: `python3 -m unittest discover -s tests -v`
+  - Result: `Ran 9 tests` / `OK`
