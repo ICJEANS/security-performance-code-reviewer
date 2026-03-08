@@ -18,6 +18,7 @@ WEB_PATTERNS = [
     ("medium", "XSS", re.compile(r"innerHTML\s*=|render_template_string\(")),
     ("medium", "CSRF", re.compile(r"@app\.route\(.+methods=.*POST")),
     ("medium", "IDOR", re.compile(r"/user/<int:id>|request\.args\.get\(['\"]id")),
+    ("high", "PathTraversal", re.compile(r"open\(\s*request\.(args|form|values)\.get\(")),
 ]
 C_PATTERNS = [
     ("high", "BufferOverflow", re.compile(r"\b(gets|strcpy|sprintf)\s*\(")),

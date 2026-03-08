@@ -48,6 +48,14 @@ class TestReviewer(unittest.TestCase):
             two = [f.file for f in scan_path(str(p))]
             self.assertEqual(one, two)
 
+    def test_detect_path_traversal_pattern(self):
+        from tempfile import TemporaryDirectory
+        with TemporaryDirectory() as td:
+            f = Path(td) / "path.py"
+            f.write_text("f = open(request.args.get('file'))\n")
+            findings = scan_file(f)
+            self.assertTrue(any(x.category == "PathTraversal" for x in findings))
+
     def test_no_perf_finding_for_sequential_loops(self):
         from tempfile import TemporaryDirectory
         with TemporaryDirectory() as td:
