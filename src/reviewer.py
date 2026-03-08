@@ -25,6 +25,9 @@ C_PATTERNS = [
 SECRET_PATTERNS = [
     ("high", "HardcodedSecret", re.compile(r"(?i)(api[_-]?key|secret|token|password)\s*=\s*['\"][^'\"]{8,}['\"]")),
 ]
+CODE_PATTERNS = [
+    ("high", "CodeInjection", re.compile(r"\beval\s*\(|\bexec\s*\(")),
+]
 
 
 LOOP_RE = re.compile(r"\b(for|while)\b")
@@ -56,7 +59,7 @@ def scan_file(path: Path):
     text = path.read_text(encoding="utf-8", errors="ignore")
     findings = []
     lines = text.splitlines()
-    patterns = WEB_PATTERNS + C_PATTERNS + SECRET_PATTERNS
+    patterns = WEB_PATTERNS + C_PATTERNS + SECRET_PATTERNS + CODE_PATTERNS
     for idx, line in enumerate(lines, start=1):
         for sev, cat, pat in patterns:
             if pat.search(line):

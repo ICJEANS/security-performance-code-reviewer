@@ -22,6 +22,14 @@ class TestReviewer(unittest.TestCase):
             findings = scan_file(f)
             self.assertTrue(any(x.category == "HardcodedSecret" for x in findings))
 
+    def test_detect_eval_code_injection_pattern(self):
+        from tempfile import TemporaryDirectory
+        with TemporaryDirectory() as td:
+            f = Path(td) / "inj.py"
+            f.write_text("result = eval(user_input)\n")
+            findings = scan_file(f)
+            self.assertTrue(any(x.category == "CodeInjection" for x in findings))
+
     def test_no_perf_finding_for_sequential_loops(self):
         from tempfile import TemporaryDirectory
         with TemporaryDirectory() as td:

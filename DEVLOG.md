@@ -14,3 +14,10 @@
 - Local test evidence:
   - Command: `python3 -m unittest discover -s tests -v`
   - Result: `Ran 3 tests in 0.004s` / `OK`
+
+## 2026-03-08 Round 2
+- Added `CodeInjection` rule for direct `eval()`/`exec()` usage.
+- Added test `test_detect_eval_code_injection_pattern`.
+- Local test evidence:
+  - Command: `python3 -m unittest discover -s tests -v`
+  - Result: `Ran 4 tests` / `OK`
